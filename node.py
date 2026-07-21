@@ -103,9 +103,9 @@ class P2PNode:
         while True:
             client, addr = server.accept()
             threading.Thread(target=self.handle_client,
-                           args=(client,), daemon=True).start()
+                           args=(client, addr), daemon=True).start()
 
-    def handle_client(self, client_socket):
+    def handle_client(self, client_socket, addr=None):
         client_socket.settimeout(10)
         try:
             message = recv_msg(client_socket)
@@ -191,7 +191,15 @@ class P2PNode:
 
     def _relay(self, msg_type, data, from_sock=None):
         msg = {"type": msg_type, "data": data}
+        sender_addr = None
+        if from_sock:
+            try:
+                sender_addr = from_sock.getpeername()
+            except Exception:
+                pass
         for peer in list(self.peers):
+            if peer == sender_addr:
+                continue
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.settimeout(5)

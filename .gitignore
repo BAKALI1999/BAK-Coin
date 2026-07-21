@@ -28,6 +28,7 @@ wallets.json
 node_wallet_*.json
 chain_*.json
 bak_chain.json
+miner_wallet.json
 
 # Temporary / test artifacts
 _test_div.py
