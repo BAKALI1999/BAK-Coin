@@ -96,6 +96,13 @@ def handle_stats(message):
     bot.reply_to(message, response)
 
 
+@bot.message_handler(commands=['checkusdt', 'check'])
+def handle_checkusdt(message):
+    args = message.text.split()[1:]
+    response = bak.handle_check_usdt(args)
+    bot.reply_to(message, response)
+
+
 @bot.message_handler(commands=['help'])
 def handle_help(message):
     bot.reply_to(message, HELP_MESSAGE)
@@ -106,7 +113,10 @@ def handle_help(message):
 # ============================================================
 @bot.message_handler(func=lambda message: True)
 def handle_text(message):
-    bot.reply_to(message, "استخدم /help لعرض الأوامر المتاحة")
+    try:
+        bot.reply_to(message, "استخدم /help لعرض الأوامر المتاحة")
+    except Exception:
+        pass
 
 
 # ============================================================

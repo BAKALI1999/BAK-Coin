@@ -369,14 +369,88 @@ class BAKBot:
 /start - بدء البوت
 /balance - عرض الرصيد
 /mining - بدء التعدين
+/claim - المطالبة بمكافأة التعدين
 /send - إرسال عملات
 /refer - الحصول على رابط إحالة
 /daily - المكافأة اليومية
 /leaderboard - أقوى المعدّنين
 /stats - إحصائيات البوت
+/checkusdt - فحص عقد USDT
 
 💡 نصيحة: كلما كنت نشطاً، حصلت على عملات أكثر!
         """
+
+    def handle_check_usdt(self, args):
+        """فحص عقد USDT"""
+        if len(args) < 2:
+            return """🔍 استخدام: /checkusdt network address
+
+مثال:
+/checkusdt BSC 0x55d398326f99059ff775485246999027b3197955
+/checkusdt Ethereum 0xdac17f958d2ee523a2206206994597c13d831ec7
+
+الشبكات المدعومة:
+• Ethereum
+• BSC
+• Tron
+• Polygon
+• Avalanche
+• Arbitrum
+• Optimism"""
+
+        network = args[0]
+        address = args[1]
+
+        # العقود الرسمية
+        official = {
+            "Ethereum": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "BSC": "0x55d398326f99059ff775485246999027b3197955",
+            "Tron": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+            "Polygon": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+            "Avalanche": "0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7",
+            "Arbitrum": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+            "Optimism": "0x94b008aa00579c1307b0ef2c499ad98a8ce58e58",
+        }
+
+        # القائمة السوداء
+        fakes = {
+            "0x1234567890123456789012345678901234567890": "❌ USDT مزيف",
+            "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd": "❌ USDT مزيف",
+        }
+
+        # فحص
+        if address in fakes:
+            return f"""
+🚫 تحذير: {fakes[address]}
+
+هذا العقد مشبوه ومزيف!
+لا تشتري أو تبيع من هذا العقد!
+            """
+
+        official_addr = official.get(network)
+        if not official_addr:
+            return f"❌ شبكة {network} غير معروفة"
+
+        if address.lower() == official_addr.lower():
+            return f"""
+✅ عقد USDTofficial!
+
+🌐 الشبكة: {network}
+📍 العنوان: {address}
+
+هذا هو العقد الرسمي لـ USDT
+يمكنك التعامل معه بأمان!
+            """
+        else:
+            return f"""
+⚠️ تحذير: هذا ليس العقد الرسمي!
+
+📍 عنوانك: {address}
+✅ العقدofficial: {official_addr}
+
+❌ لا تتعامل مع هذا العقد!
+قد يكون مزيفاً!
+            """
 
 
 # ============================================================
