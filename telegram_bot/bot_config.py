@@ -17,9 +17,9 @@ BAK-Coin Telegram Bot
 """
 
 # إعدادات البوت
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"  # الصق Token من BotFather
+BOT_TOKEN = "8885280428:AAH1A0WX9b8h5jGP_qnJHKFEc83e8_IJbvI"
 BOT_NAME = "BAK-Coin Bot"
-BOT_USERNAME = "bakcoin_bot"
+BOT_USERNAME = "bak_coin_bot"
 
 # إعدادات الشبكة
 NETWORK = "BSC Testnet"
