@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAK-Coin — رجّع فلوسك</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .hero h1 {
+            font-size: 4em;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+        .hero .tagline {
+            font-size: 1.8em;
+            margin: 20px 0;
+            color: #4ecca3;
+        }
+        .hero .sub {
+            font-size: 1.1em;
+            color: #aaa;
+        }
+        
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .stat {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+        .stat .number {
+            font-size: 2em;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .stat .label {
+            color: #aaa;
+            margin-top: 5px;
+        }
+        
+        /* Comparison */
+        .compare {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+        .compare h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th { color: #4ecca3; }
+        .winner { color: #4ecca3; font-weight: bold; }
+        .loser { color: #ff6b6b; }
+        
+        /* CTA */
+        .cta {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        .social {
+            margin: 20px 0;
+        }
+        .social a {
+            color: #4ecca3;
+            margin: 0 15px;
+            font-size: 1.5em;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>BAK-Coin</h1>
+            <div class="tagline">رجّع فلوسك</div>
+            <p class="sub">تحويلات مالية عالمية بدون بنوك — رسوم 0.1% — سرعة 90 ثانية</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="number">0.1%</div>
+                <div class="label">رسوم التحويل</div>
+            </div>
+            <div class="stat">
+                <div class="number">90s</div>
+                <div class="label">وقت التحويل</div>
+            </div>
+            <div class="stat">
+                <div class="number">21M</div>
+                <div class="label">العرض الأقصى</div>
+            </div>
+            <div class="stat">
+                <div class="number">$0</div>
+                <div class="label">الحد الأدنى</div>
+            </div>
+        </div>
+        
+        <div class="compare">
+            <h2>لماذا BAK بدلاً من Western Union؟</h2>
+            <table>
+                <tr>
+                    <th></th>
+                    <th>Western Union</th>
+                    <th>BAK-Coin</th>
+                </tr>
+                <tr>
+                    <td>الرسوم</td>
+                    <td class="loser">$15</td>
+                    <td class="winner">$0.10</td>
+                </tr>
+                <tr>
+                    <td>السرعة</td>
+                    <td class="loser">3-5 أيام</td>
+                    <td class="winner">90 ثانية</td>
+                </tr>
+                <tr>
+                    <td>الحساب البنكي</td>
+                    <td class="loser">مطلوب</td>
+                    <td class="winner">غير مطلوب</td>
+                </tr>
+                <tr>
+                    <td>الحد الأدنى</td>
+                    <td class="loser">$50</td>
+                    <td class="winner">$0.10</td>
+                </tr>
+                <tr>
+                    <td>التواجد</td>
+                    <td class="loser">80 دولة</td>
+                    <td class="winner">أي مكان</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="cta">
+            <a href="https://github.com/BAKALI1999/BAK-Coin" class="btn">ابدأ الآن</a>
+        </div>
+        
+        <div class="footer">
+            <div class="social">
+                <a href="#">Twitter</a>
+                <a href="#">Telegram</a>
+                <a href="#">Discord</a>
+            </div>
+            <p>BAK-Coin — رجّع فلوسك</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAK Wallet — محفظة BAK</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+            color: #fff;
+            min-height: 100vh;
+        }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #ffd700; padding: 20px; }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+        .balance {
+            text-align: center;
+            font-size: 3em;
+            color: #ffd700;
+            padding: 20px;
+        }
+        .balance small { font-size: 0.4em; color: #aaa; }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1em;
+        }
+        input::placeholder { color: #666; }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .btn-gold { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; }
+        .btn-green { background: linear-gradient(135deg, #4ecca3, #38b2ac); color: #000; }
+        .btn-red { background: linear-gradient(135deg, #ff6b6b, #ee5a5a); color: #fff; }
+        
+        .hidden { display: none; }
+        
+        .tx-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .tx-amount { color: #4ecca3; }
+        .tx-fee { color: #ff6b6b; font-size: 0.8em; }
+        
+        .address-display {
+            word-break: break-all;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.8em;
+            color: #4ecca3;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.1);
+        }
+        .tab.active { background: rgba(255,215,0,0.3); color: #ffd700; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BAK-Coin</h1>
+        
+        <!-- Create Wallet -->
+        <div id="create-wallet">
+            <div class="card">
+                <h2>إنشاء محفظة جديدة</h2>
+                <p style="color:#aaa; margin:10px 0">أنشئ محفظتك في ثوانٍ</p>
+                <button class="btn btn-gold" onclick="createWallet()">إنشاء محفظة</button>
+            </div>
+        </div>
+        
+        <!-- Wallet Dashboard -->
+        <div id="dashboard" class="hidden">
+            <div class="card">
+                <div class="balance">
+                    <span id="balance">0</span> BAK
+                    <br><small>رصيدك الحالي</small>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>عنوانك</h3>
+                <div class="address-display" id="my-address"></div>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('send')">إرسال</div>
+                <div class="tab" onclick="showTab('history')">السجل</div>
+            </div>
+            
+            <!-- Send -->
+            <div id="send-tab">
+                <div class="card">
+                    <h3>إرسال BAK</h3>
+                    <input type="text" id="send-to" placeholder="عنوان المستلم">
+                    <input type="number" id="send-amount" placeholder="المبلغ">
+                    <button class="btn btn-green" onclick="sendBAK()">إرسال</button>
+                </div>
+            </div>
+            
+            <!-- History -->
+            <div id="history-tab" class="hidden">
+                <div class="card">
+                    <h3>سجل المعاملات</h3>
+                    <div class="tx-list" id="tx-list">
+                        <p style="color:#aaa">لا توجد معاملات بعد</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-red" onclick="logout()">خروج</button>
+        </div>
+    </div>
+    
+    <script>
+        // BAK-Coin Web Wallet
+        let wallet = null;
+        let transactions = [];
+        
+        function createWallet() {
+            // Generate random private key
+            const privateKey = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            // Generate address (simplified)
+            const address = Array.from(crypto.getRandomValues(new Uint8Array(20)))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            wallet = { privateKey, address, balance: 0 };
+            localStorage.setItem('bak_wallet', JSON.stringify(wallet));
+            
+            document.getElementById('my-address').textContent = address;
+            document.getElementById('create-wallet').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+        }
+        
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('send-tab').classList.toggle('hidden', tab !== 'send');
+            document.getElementById('history-tab').classList.toggle('hidden', tab !== 'history');
+        }
+        
+        function sendBAK() {
+            const to = document.getElementById('send-to').value;
+            const amount = parseFloat(document.getElementById('send-amount').value);
+            
+            if (!to || !amount) {
+                alert('أدخل العنوان والمبلغ');
+                return;
+            }
+            
+            if (amount > wallet.balance) {
+                alert('رصيد غير كافٍ');
+                return;
+            }
+            
+            const fee = Math.max(1, Math.floor(amount * 0.001));
+            
+            wallet.balance -= (amount + fee);
+            transactions.push({
+                type: 'send',
+                to, amount, fee,
+                time: new Date().toLocaleString()
+            });
+            
+            localStorage.setItem('bak_wallet', JSON.stringify(wallet));
+            updateUI();
+            
+            document.getElementById('send-to').value = '';
+            document.getElementById('send-amount').value = '';
+        }
+        
+        function updateUI() {
+            document.getElementById('balance').textContent = wallet.balance;
+            document.getElementById('tx-list').innerHTML = transactions.length === 0
+                ? '<p style="color:#aaa">لا توجد معاملات بعد</p>'
+                : transactions.map(tx => `
+                    <div class="tx-item">
+                        <div>
+                            <strong>${tx.type === 'send' ? 'إرسال' : 'استلام'}</strong>
+                            <br><small>${tx.time}</small>
+                        </div>
+                        <div>
+                            <span class="tx-amount">${tx.type === 'send' ? '-' : '+'}${tx.amount}</span>
+                            <br><span class="tx-fee">رسوم: ${tx.fee}</span>
+                        </div>
+                    </div>
+                `).join('');
+        }
+        
+        function logout() {
+            localStorage.removeItem('bak_wallet');
+            wallet = null;
+            document.getElementById('create-wallet').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+        
+        // Load existing wallet
+        const saved = localStorage.getItem('bak_wallet');
+        if (saved) {
+            wallet = JSON.parse(saved);
+            document.getElementById('my-address').textContent = wallet.address;
+            document.getElementById('create-wallet').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            updateUI();
+        }
+    </script>
+</body>
+</html>
