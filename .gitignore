@@ -1,3 +1,34 @@
-wallets.json 
-node_wallet_*.json 
-__pycache__/ 
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# BAK-Coin runtime data (wallets contain private keys — NEVER commit)
+wallets.json
+node_wallet_*.json
+chain_*.json
+bak_chain.json
+
+# Temporary / test artifacts
+_test_div.py
+*.tmp

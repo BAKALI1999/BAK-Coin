@@ -1,39 +1,71 @@
-# BAK-Coin 🚀
+# BAK-Coin
 
-**BAK-Coin** is a secure, lightweight, and decentralized Peer-to-Peer (P2P) blockchain implementation built from scratch in Python. It features custom cryptographic engines, a command-line interface (CLI), node networking, and transaction management.
+A fully functional cryptocurrency built from scratch in pure Python — no external dependencies.
 
----
+BAK-Coin implements the complete stack: a custom big-integer arithmetic engine, ECDSA digital signatures (secp256k1), proof-of-work mining, a UTXO-like balance system with full chain validation, a peer-to-peer network with real TCP communication, and encrypted wallet persistence.
 
-## 📂 Project Architecture
+## Architecture
 
-* **`blockchain.py`**: Core blockchain logic, block generation, proof-of-work, and chain validation.
-* **`engine.py`**: Cryptographic hashing and core execution mechanics.
-* **`node.py`**: P2P networking layer allowing nodes to communicate and sync.
-* **`cli.py`**: Command-line interface for interacting with the blockchain and wallet.
-* **`ecdsa.py`**: Custom digital signature algorithm implementation for secure transactions.
-* **`demo_p2p.py`**: Simulation script for peer-to-peer network interactions.
-* **`test_bak.py` & `test_smoke.py`**: Automated test suites for verifying system integrity.
+```
+engine.py      — Arbitrary-precision integer math (2^64 limbs, little-endian)
+ecdsa.py       — ECDSA signatures over secp256k1 + RFC6979 deterministic nonces
+blockchain.py  — Blocks, transactions, PoW mining, balance replay, JSON persistence
+node.py        — P2P node: TCP networking, block/transaction propagation, chain sync
+cli.py         — Interactive wallet UI: balances, mining, sending, wallet management
+```
 
----
+## Features
 
-## ⚙️ Getting Started
+- **Custom big-integer engine** — no `gmpy2` or external math libraries
+- **ECDSA/secp256k1** — the same curve used by Bitcoin, with RFC6979 deterministic k-generation
+- **Proof-of-Work mining** — adjustable difficulty
+- **Full chain validation** — PoW check, signature verification, balance replay (double-spend prevention)
+- **P2P networking** — real TCP sockets, length-prefixed messages, block/transaction gossip
+- **Encrypted wallets** — PBKDF2-HMAC-SHA256 key derivation + stream cipher (no plaintext private keys on disk)
+- **Zero external dependencies** — runs on Python 3.10+ with only `hashlib` and `os` from stdlib
 
-### Prerequisites
-Make sure you have **Python 3.8+** installed on your system.
+## Quick Start
 
-### Installation
-Clone the repository to your local machine:
+### Interactive CLI (single machine)
 
 ```bash
-git clone [https://github.com/BAKALI1999/BAK-Coin.git](https://github.com/BAKALI1999/BAK-Coin.git)
-cd BAK-Coin
-🚀 Usage
-Running Tests
-To verify that everything is working properly, run the test suites:
-python test_smoke.py
-python test_bak.py
-Running the CLI / Node
-You can interact with the blockchain or start a node using the provided command-line tools:
-python cli.py
-🛡️ License
-This project is open-source and available under the MIT License.
+python -B cli.py
+```
+
+On first run, you'll set a wallet passphrase. Three default wallets (miner, alice, bob) are created automatically.
+
+### P2P Network (two machines or terminals)
+
+**Terminal 1** — start node on port 5000:
+```bash
+python -B node.py --port 5000
+```
+
+**Terminal 2** — start node on port 5001, then connect:
+```bash
+python -B node.py --port 5001
+# From the menu: choose 2 → enter 127.0.0.1 and port 5000
+```
+
+For real LAN/internet deployment, bind to `0.0.0.0` (the default) and connect to the other machine's IP address. You'll need port forwarding or firewall rules for internet access.
+
+### Run Tests
+
+```bash
+python -B test_bak.py       # 20,000+ engine tests
+python -B test_smoke.py     # End-to-end smoke test (18 checks)
+python -B demo_p2p.py       # P2P demo over real TCP
+```
+
+## Security
+
+- **Private keys** are encrypted with your passphrase using PBKDF2 (200,000 rounds) + SHA-256 stream cipher
+- **No external crypto libraries** — all cryptographic primitives are implemented in `engine.py` and `ecdsa.py`
+- **Full balance validation** — the chain replays all transactions on every block to detect double-spends
+- **Wallet files are encrypted** — `wallets.json` and `node_wallet_*.json` store `{v, salt, ct}`, never plaintext
+
+> **Warning:** This is an educational project. For production use with real value, additional hardening is recommended (HMAC on wallet files, hardware wallet support, peer authentication, etc.)
+
+## License
+
+[MIT](LICENSE)
