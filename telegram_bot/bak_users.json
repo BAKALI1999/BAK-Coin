@@ -1,0 +1,16 @@
+{
+  "8199111054": {
+    "user_id": 8199111054,
+    "username": "مجهول",
+    "first_name": "Ali",
+    "balance": 0,
+    "mining_active": false,
+    "mining_start": 1784675562.1645677,
+    "total_mined": 0,
+    "referrals": 0,
+    "referred_by": null,
+    "last_daily": null,
+    "join_date": "2026-07-22T00:12:29.861769",
+    "wallet_address": "49f6e587804371441d76f04af973ed65b018db7f"
+  }
+}

@@ -59,7 +59,7 @@ class UserManager:
     def _generate_address(self, user_id):
         """توليد عنوان محفظة فريد"""
         data = f"bak-{user_id}-{time.time()}"
-        return hashlib.sha256(data.encode()).hexdigest()[:40]
+        return "0x" + hashlib.sha256(data.encode()).hexdigest()[:40]
 
     def get_balance(self, user_id):
         """الحصول على الرصيد"""
@@ -106,17 +106,12 @@ class UserManager:
             return True
         return False
 
-    def claim_daily(self, user_id):
+    def handle_daily(self, user_id):
         """المطالبة بالمكافأة اليومية"""
         uid = str(user_id)
         if uid in self.users:
-            last = self.users[uid].get("last_daily")
-            if last:
-                last_date = datetime.fromisoformat(last).date()
-                if last_date == datetime.now().date():
-                    return False  # تم المطالبة اليوم
-            self.users[uid]["last_daily"] = datetime.now().isoformat()
-            self.users[uid]["balance"] += 5
+            self.users[uid]["balance"] += 50  # مكافأة فورية
+            self.users[uid]["total_mined"] += 50
             self._save()
             return True
         return False
@@ -189,7 +184,7 @@ class MiningSystem:
         for uid, user in list(self.um.users.items()):
             if user.get("mining_active"):
                 elapsed = now - user.get("mining_start", now)
-                if elapsed >= 3600:  # ساعة واحدة
+                if elapsed >= 60:  # دقيقة واحدة (للتجربة)
                     # مكافأة التعدين
                     reward = 10  # BAK
                     user["balance"] += reward
@@ -262,15 +257,32 @@ class BAKBot:
         else:
             # بدء التعدين
             self.um.start_mining(user_id)
-            return "▶️ بدأ التعدين!\n\nستحصل على 10 BAK كل ساعة\nاستخدم /mining لإيقاف التعدين"
+            return "▶️ بدأ التعدين!\n\nستحصل على 10 BAK كل دقيقة\nاستخدم /mining لإيقاف التعدين"
+
+    def handle_claim(self, user_id):
+        """أمر /claim - المطالبة بمكافأة التعدين"""
+        user = self.um.users.get(str(user_id), {})
+        if user.get("mining_active"):
+            elapsed = time.time() - user.get("mining_start", 0)
+            if elapsed >= 60:
+                self.um.add_balance(user_id, 10)
+                self.um.users[str(user_id)]["mining_start"] = time.time()
+                self.um._save()
+                balance = self.um.get_balance(user_id)
+                return f"⛏️ تم التعدين!\n\n+10 BAK\nرصيدك الحالي: {balance} BAK"
+            else:
+                remaining = int(60 - elapsed)
+                return f"⏳ انتظر {remaining} ثانية للتعدين التالي"
+        else:
+            return "❌ بدّأ التعدين أولاً باستخدام /mining"
 
     def handle_daily(self, user_id):
         """أمر /daily"""
         if self.um.claim_daily(user_id):
             balance = self.um.get_balance(user_id)
-            return f"🎁 تم الحصول على المكافأة اليومية!\n\n+5 BAK\nرصيدك الحالي: {balance} BAK"
+            return f"🎁 تم الحصول على المكافأة!\n\n+50 BAK\nرصيدك الحالي: {balance} BAK"
         else:
-            return "❌ لقد حصلت على المكافأة اليومية بالفعل!\nحاول مرة أخرى غداً"
+            return "❌ حدث خطأ، حاول مرة أخرى"
 
     def handle_send(self, user_id, args):
         """أمر /send"""

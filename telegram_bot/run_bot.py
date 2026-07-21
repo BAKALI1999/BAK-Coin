@@ -55,6 +55,13 @@ def handle_mining(message):
     bot.reply_to(message, response)
 
 
+@bot.message_handler(commands=['claim'])
+def handle_claim(message):
+    user_id = message.from_user.id
+    response = bak.handle_claim(user_id)
+    bot.reply_to(message, response)
+
+
 @bot.message_handler(commands=['daily'])
 def handle_daily(message):
     user_id = message.from_user.id
